@@ -1,6 +1,6 @@
-/******************************************************************
+******************************************************************
  *
- *   YOUR NAME / SECTION NUMBER
+ *   Luciana Pinel / 002
  *
  *   This java file contains the problem solutions of isSubSet, findKthLargest,
  *   and sort2Arrays methods. You should utilize the Java Collection Framework for
@@ -32,9 +32,21 @@ class ProblemSolutions {
 
     public boolean isSubset(int list1[], int list2[]) {
 
-        // ADD YOU CODE HERE -- DON'T FORGET TO ADD YOR NAME AT TOP OF FILE
+        // Create a hash set that can store all elements from list1
+        Set<Integer> set = new HashSet<>();
 
-        return false;
+        for (int num : list1) {
+            set.add(num);
+        }
+
+        // Check if every element in list2 is in the set
+        for (int num : list2) {
+            if (!set.contains(num)) {
+                return false;   // If any element of B is missing it is not a subset
+            }
+        }
+
+        return true;  // All elements of B found in A
     }
 
 
@@ -53,9 +65,18 @@ class ProblemSolutions {
 
     public int findKthLargest(int[] array, int k) {
 
-        // ADD YOUR CODE HERE
+        // Create a min-heap (natural ordering)
+        PriorityQueue<Integer> pq = new PriorityQueue<>();
 
-        return 0;
+        for (int num : array) {
+            pq.offer(num);         // add element
+            if (pq.size() > k) {
+                pq.poll();         // remove smallest to keep only k largest
+            }
+        }
+
+        // The root now holds the kth largest element
+        return pq.peek();
     }
 
 
@@ -74,9 +95,27 @@ class ProblemSolutions {
 
     public int[] sort2Arrays(int[] array1, int[] array2) {
 
-        // ADD YOU CODE HERE
+        // Create a min-heap
+        PriorityQueue<Integer> pq = new PriorityQueue<>();
 
-        return null;
+        // Add all elements from both arrays
+        for (int num : array1) {
+            pq.offer(num);
+        }
+        for (int num : array2) {
+            pq.offer(num);
+        }
+
+        // Prepare result array of combined size
+        int[] sorted = new int[pq.size()];
+        int index = 0;
+
+        // Remove elements in ascending order
+        while (!pq.isEmpty()) {
+            sorted[index++] = pq.poll();
+        }
+
+        return sorted;
     }
 
 }
