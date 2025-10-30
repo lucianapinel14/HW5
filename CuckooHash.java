@@ -1,6 +1,6 @@
 /******************************************************************
  *
- *   YOUR NAME / SECTION NUMBER
+ *   Luciana Pinel / 002
  *
  *   Note, additional comments provided throughout this source code
  *   is for educational purposes
@@ -250,8 +250,51 @@ public class CuckooHash<K, V> {
 		// Also make sure you read this method's prologue above, it should help
 		// you. Especially the two HINTS in the prologue.
 
-		return;
-	}
+        // Step 1: Prevent duplicate <key,value> pair
+        for (int i = 0; i < CAPACITY; i++) {
+            if (table[i] != null &&
+                    table[i].getBucKey().equals(key) &&
+                    table[i].getValue().equals(value)) {
+                return;  // already present
+            }
+        }
+
+        // Step 2: Begin Cuckoo insertion
+        K curKey = key;
+        V curValue = value;
+        int pos = hash1(curKey);
+        boolean useFirstHash = true;
+
+        // Step 3: Perform at most CAPACITY displacements (cycle detection)
+        for (int loopCount = 0; loopCount < CAPACITY; loopCount++) {
+
+            // Case 1: Empty slot → place and finish
+            if (table[pos] == null) {
+                table[pos] = new Bucket<>(curKey, curValue);
+                return;
+            }
+
+            // Case 2: Occupied → kick out existing element
+            Bucket<K, V> displaced = table[pos];
+            table[pos] = new Bucket<>(curKey, curValue);
+
+            // Prepare displaced pair for next insertion
+            curKey = displaced.getBucKey();
+            curValue = displaced.getValue();
+
+            // Alternate hash locations
+            if (useFirstHash)
+                pos = hash2(curKey);
+            else
+                pos = hash1(curKey);
+
+            useFirstHash = !useFirstHash;
+        }
+
+        // Step 4: Cycle detected → rehash and retry last displaced element
+        rehash();
+        put(curKey, curValue);
+    }
 
 
 	/**
